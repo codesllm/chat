@@ -1,0 +1,251 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+const ChatInterface = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        setIsConnected(response.ok);
+      } catch (error) {
+        console.error("API connection error:", error);
+        setIsConnected(false);
+      }
+    };
+
+    checkConnection();
+  }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleStream = async (response: Response) => {
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    const assistantMessage: Message = { role: "assistant", content: "" };
+
+    if (!reader) {
+      throw new Error("No reader available");
+    }
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6).trim();
+
+            if (data === "[DONE]") {
+              continue;
+            }
+
+            try {
+              const parsed = JSON.parse(data);
+              assistantMessage.content += parsed.content;
+
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                if (
+                  newMessages.length > 0 &&
+                  newMessages[newMessages.length - 1].role === "assistant"
+                ) {
+                  newMessages[newMessages.length - 1] = { ...assistantMessage };
+                } else {
+                  newMessages.push({ ...assistantMessage });
+                }
+                return newMessages;
+              });
+            } catch (e) {
+              console.error("Error parsing JSON:", e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error reading stream:", error);
+      throw error;
+    } finally {
+      reader.releaseLock();
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim() || !isConnected) return;
+
+    const userMessage: Message = { role: "user", content: input };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+    setInput("");
+
+    try {
+      const response = await fetch(`${API_URL}/api/chat/stream`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: input }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      await handleStream(response);
+    } catch (error) {
+      console.error("Error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Sorry, there was an error processing your request. Please try again.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isConnected) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Connection Error</h2>
+          <p className="text-gray-700">
+            Unable to connect to the API. Please check if the server is running.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-screen bg-white">
+      <header className="bg-white shadow-md py-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800">ChatGPT Clone</h1>
+      </header>
+
+      <main className="flex-1 overflow-hidden flex justify-center">
+        <div className="w-full max-w-4xl m-4 flex flex-col">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center space-y-4">
+                  <h2 className="text-2xl font-semibold text-gray-800">
+                    Welcome to ChatGPT Clone
+                  </h2>
+                  <p className="text-gray-600">
+                    Start a conversation by typing a message below.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((message, index) => (
+                  <div key={index} className="flex p-4 rounded-lg bg-white">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-500">
+                      {message.role === "assistant" ? (
+                        // SVG for AI (chip-style icon)
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 2H7a2 2 0 00-2 2v2M15 2h2a2 2 0 012 2v2M2 9h2M20 9h2M2 15h2M20 15h2M9 22H7a2 2 0 01-2-2v-2M15 22h2a2 2 0 002-2v-2"
+                          />
+                          <rect
+                            x="9"
+                            y="9"
+                            width="6"
+                            height="6"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            fill="none"
+                          />
+                        </svg>
+                      ) : (
+                        // SVG for User (user icon)
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5.121 17.804A7.969 7.969 0 0112 15c2.2 0 4.2.84 5.879 2.204M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <p className="text-gray-800">{message.content}</p>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          <div className="p-4">
+            <form onSubmit={handleSubmit} className="flex space-x-4">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={!isConnected}
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+                disabled={!input.trim() || isLoading || !isConnected}
+              >
+                {isLoading ? "Sending..." : "Send"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default ChatInterface;
