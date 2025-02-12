@@ -153,7 +153,7 @@ This project exists thanks to all the people who contribute.
             # Concatenate newline characters outside the f-string expression
             content = paragraph + "\n\n"
             yield f"data: {json.dumps({'content': content})}\n\n"
-            await asyncio.sleep(0.3)  # Simulate delay
+            await asyncio.sleep(0.1)  # Simulate delay
     yield "data: [DONE]\n\n"
 
 @app.post("/api/chat/stream")

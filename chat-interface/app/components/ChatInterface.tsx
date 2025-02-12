@@ -157,7 +157,7 @@ const ChatInterface = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <header className="bg-white shadow-md py-6">
-        <h1 className="text-3xl font-bold text-center text-gray-800">ChatGPT Clone</h1>
+        <h1 className="text-2xl font-bold text-center text-gray-800">ChatGPT Clone</h1>
       </header>
 
       <main className="flex-1 overflow-hidden flex justify-center">
@@ -166,7 +166,7 @@ const ChatInterface = () => {
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center space-y-4">
-                  <h2 className="text-2xl font-semibold text-gray-800">Welcome to ChatGPT Clone</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">Welcome to ChatGPT Clone</h2>
                   <p className="text-gray-600">Start a conversation by typing a message below.</p>
                 </div>
               </div>
@@ -210,7 +210,7 @@ const ChatInterface = () => {
                     </div>
                     <div className="ml-4 flex-1">
                       <ReactMarkdown
-                        className="prose max-w-none space-y-4"
+                        className="prose max-w-none space-y-4 text-sm"
                         remarkPlugins={[remarkGfm]}
                         components={{
                           code({ node, inline, className, children, ...props }) {
@@ -244,12 +244,12 @@ const ChatInterface = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 p-3 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                className="flex-1 p-3 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:outline-none transition-colors duration-200 text-sm"
                 disabled={!isConnected}
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg text-sm"
                 disabled={!input.trim() || isLoading || !isConnected}
               >
                 {isLoading ? "Sending..." : "Send"}
@@ -271,6 +271,9 @@ const ChatInterface = () => {
         }
       `}</style>
       <style jsx global>{`
+        html, body {
+          font-size: 14px;
+        }
         .prose {
           max-width: 75ch;
           color: inherit;
