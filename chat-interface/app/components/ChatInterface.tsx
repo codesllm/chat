@@ -162,7 +162,7 @@ const ChatInterface = () => {
 
       <main className="flex-1 overflow-hidden flex justify-center">
         <div className="w-full max-w-6xl m-4 flex flex-col">
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 pr-0">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 pr-0">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center space-y-4">
@@ -171,9 +171,9 @@ const ChatInterface = () => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {messages.map((message, index) => (
-                  <div key={index} className="flex p-6 rounded-lg bg-gray-100 shadow-md">
+                  <div key={index} className="flex p-4 rounded-lg bg-gray-100 shadow-md">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-500">
                       {message.role === "assistant" ? (
                         <svg
@@ -210,7 +210,7 @@ const ChatInterface = () => {
                     </div>
                     <div className="ml-4 flex-1">
                       <ReactMarkdown
-                        className="prose max-w-none space-y-4 text-sm"
+                        className="prose max-w-none text-sm whitespace-pre-wrap"
                         remarkPlugins={[remarkGfm]}
                         components={{
                           code({ node, inline, className, children, ...props }) {
@@ -225,15 +225,17 @@ const ChatInterface = () => {
                               </code>
                             )
                           },
-                          p: ({ children }) => <p className="mb-4">{children}</p>,
-                          h1: ({ children }) => <h1 className="text-2xl font-bold mt-6 mb-4">{children}</h1>,
-                          h2: ({ children }) => <h2 className="text-xl font-bold mt-5 mb-3">{children}</h2>,
-                          h3: ({ children }) => <h3 className="text-lg font-bold mt-4 mb-2">{children}</h3>,
-                          ul: ({ children }) => <ul className="list-disc pl-5 mb-4">{children}</ul>,
-                          ol: ({ children }) => <ol className="list-decimal pl-5 mb-4">{children}</ol>,
-                          li: ({ children }) => <li className="mb-2">{children}</li>,
+                          p: ({ children }) => <p className="mb-1 whitespace-pre-wrap">{children}</p>,
+                          h1: ({ children }) => <h1 className="text-2xl font-bold mt-3 mb-1">{children}</h1>,
+                          h2: ({ children }) => <h2 className="text-xl font-bold mt-2 mb-1">{children}</h2>,
+                          h3: ({ children }) => <h3 className="text-lg font-bold mt-2 mb-1">{children}</h3>,
+                          ul: ({ children }) => <ul className="list-disc pl-5 mt-0.5 mb-1 space-y-0.5">{children}</ul>,
+                          ol: ({ children }) => (
+                            <ol className="list-decimal pl-5 mt-0.5 mb-1 space-y-0.5">{children}</ol>
+                          ),
+                          li: ({ children }) => <li className="mb-0">{children}</li>,
                           blockquote: ({ children }) => (
-                            <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4">{children}</blockquote>
+                            <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-1">{children}</blockquote>
                           ),
                         }}
                       >
@@ -321,10 +323,18 @@ const ChatInterface = () => {
           opacity: 0.8;
         }
         .prose > * + * {
-          margin-top: 1.5em;
+          margin-top: 0.25em;
         }
         .prose > * + h1, .prose > * + h2, .prose > * + h3 {
-          margin-top: 2em;
+          margin-top: 0.5em;
+        }
+        .prose ul, .prose ol {
+          margin-top: 0.125em;
+          margin-bottom: 0.125em;
+        }
+        .prose li {
+          margin-top: 0;
+          margin-bottom: 0.125em;
         }
       `}</style>
     </div>

@@ -23,43 +23,45 @@ class ChatRequest(BaseModel):
 
 async def fake_stream_response(message: str) -> AsyncGenerator[str, None]:
     response = f"""Answer\n
-    
-## Table of Contents
+Sample Markdown Output
 
-- [Table of Contents](#table-of-contents)
-- [About The Project](#about-the-project)
-  - [Built With](#built-with)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgments](#acknowledgments)
-- [Notice](#notice)
+Introduction
 
-## About The Project
+This is a **sample document** generated in Markdown format. The purpose of this document is to demonstrate how Claude outputs content in Markdown.
 
-![Screenshot](images/demo.gif)
+---
 
-One of the challenges with building and contributing to open source software is that while many projects have amazing functionalities, they often miss out on reaching a wider audience due to lack of clear and user-friendly installation instructions. In addition, lack of efficient showcase of their use cases also contribute to the lower reach of these projects.
+ Features of the Output
 
-While there are ReadME templates that can help address this, the process of manually filling out these templates can be time-consuming and tedious. That&#39;s where our project makeread.me comes in.
+1. **Headings**: Supports multiple levels of headings.
+2. **Lists**: Both ordered and unordered lists are supported.
+3. **Code Blocks**: Inline and block code formatting available.
+4. **Links**: Hyperlinks can be included.
+5. **Tables**: Basic tables can be created.
 
-Introducing makeread.me, an automated ReadMe Generator that can revolutionize how you create your project documentation. It is designed to:
+---
 
-- Save your valuable time enhancing your focus on development,
-- Automate redundant tasks, and,
-- Implement DRY (Don&#39;t Repeat Yourself) principles to your documentation.
+ Example Elements
 
-It&#39;s free, open-source, and highly customizable. Feel free to modify our templates to fit your needs. If you find that a particular component is missing, you are more than welcome to contribute and expand the project.
+Ordered List
 
-We&#39;ve made it easy for you to contribute to the project by using Nunjucks and JSON templates for programmatic mapping. Enjoy the benefits of clear and concise project documentation with makeread.me!
+1. First item
+2. Second item
+3. Third item
 
-### Built With
+Unordered List
 
-This project was built with the following technologies:
+- Item A
+- Item B
+  - Sub-item B1
+  - Sub-item B2
+- Item C
+
+---
+
+Code Block Example
+
+Here is an example of a code block:
 
 """
     # Split the response into paragraphs
