@@ -275,7 +275,9 @@ const ChatInterface = () => {
                         components={{
                           code({ node, inline, className, children, ...props }) {
                             const match = /language-(\w+)/.exec(className || "")
-                            return !inline && match ? (
+                            // Only use syntax highlighting for explicitly specified languages
+                            // that are not JSON
+                            return !inline && match && match[1] !== 'json' ? (
                               <div className="rounded-md overflow-hidden my-3">
                                 <SyntaxHighlighter 
                                   style={atomDark} 
@@ -288,7 +290,7 @@ const ChatInterface = () => {
                                 </SyntaxHighlighter>
                               </div>
                             ) : (
-                              <code className="bg-gray-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-sm" {...props}>
+                              <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-mono text-sm" {...props}>
                                 {children}
                               </code>
                             )
