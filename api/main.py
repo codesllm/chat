@@ -23,33 +23,33 @@ class ChatRequest(BaseModel):
 
 async def fake_stream_response(message: str) -> AsyncGenerator[str, None]:
     response = f"""Answer\n
-Sample Markdown Output
+# Sample Markdown Output
 
-Introduction
+## Introduction
 
 This is a **sample document** generated in Markdown format. The purpose of this document is to demonstrate how Claude outputs content in Markdown.
 
----
+
 
  Features of the Output
 
-1. **Headings**: Supports multiple levels of headings.
+1. **Headings**: Supports multiple levels of headings. Features of the Output Features of the Output Features of the Output Features of the Output
 2. **Lists**: Both ordered and unordered lists are supported.
-3. **Code Blocks**: Inline and block code formatting available.
+3. **Code Blocks**: Inline and block code formatting available. Features of the Output Features of the Output Features of the Output Features of the Output
 4. **Links**: Hyperlinks can be included.
 5. **Tables**: Basic tables can be created.
 
----
 
- Example Elements
 
-Ordered List
+## Example Elements
+
+### Ordered List
 
 1. First item
 2. Second item
 3. Third item
 
-Unordered List
+### Unordered List
 
 - Item A
 - Item B
@@ -59,7 +59,7 @@ Unordered List
 
 ---
 
-Code Block Example
+### Code Block Example
 
 Here is an example of a code block:
 

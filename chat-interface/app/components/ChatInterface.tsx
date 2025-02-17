@@ -156,12 +156,12 @@ const ChatInterface = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <header className="bg-white shadow-md py-6">
+      <header className="bg-blue-600 shadow-md py-6">
         <h1 className="text-2xl font-bold text-center text-gray-800">ChatGPT Clone</h1>
       </header>
 
       <main className="flex-1 overflow-hidden flex justify-center">
-        <div className="w-full max-w-6xl m-4 flex flex-col">
+        <div className="mx-80 w-full max-w-full m-4 flex flex-col">
           <div className="flex-1 overflow-y-auto p-4 space-y-4 pr-0">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -210,7 +210,7 @@ const ChatInterface = () => {
                     </div>
                     <div className="ml-4 flex-1">
                       <ReactMarkdown
-                        className="prose max-w-none text-sm whitespace-pre-wrap"
+                        className="prose max-w-none text-sm whitespace-pre-wrap break-words"
                         remarkPlugins={[remarkGfm]}
                         components={{
                           code({ node, inline, className, children, ...props }) {
@@ -250,7 +250,7 @@ const ChatInterface = () => {
           </div>
 
           <div className="p-4">
-            <form onSubmit={handleSubmit} className="flex space-x-4">
+            <form onSubmit={handleSubmit} className="flex space-x-4 mx-96">
               <input
                 type="text"
                 value={input}
@@ -287,8 +287,7 @@ const ChatInterface = () => {
           font-size: 14px;
         }
         .prose {
-          max-width: 75ch;
-          color: inherit;
+          max-width: none;
         }
         .prose a {
           color: #3b82f6;
